@@ -1,0 +1,6 @@
+{
+  "/api/*": "/$1",
+  "/api/annonces/vendeur/:vendeurId": "/annonces?vendeurId=:vendeurId",
+  "/api/messages/annonce/:annonceId": "/messages?annonceId=:annonceId",
+  "/api/conversations/user/:userId": "/conversations?userId=:userId"
+}
