@@ -15,9 +15,8 @@
 
 class ApiConfig {
   /// URL de production Render (laisser null pour utiliser localhost en dev)
-  static const String? productionUrl = null;
-  // Une fois déployé, remplacer par :
-  // static const String? productionUrl = 'https://mini-marketplace-api.onrender.com';
+  static const String? productionUrl = 'https://mini-marketplace-api.onrender.com';
+  // Remplacer par ton URL exacte Render
 
   /// IP locale pour appareils physiques (ignoré si productionUrl est défini)
   static const String? customIpAddress = null;
