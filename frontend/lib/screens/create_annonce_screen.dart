@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/annonce_provider.dart';
+import '../services/image_picker_service.dart';
 import '../widgets/app_colors.dart';
 import '../widgets/primary_button.dart';
 
@@ -49,41 +49,15 @@ class _CreateAnnonceScreenState extends State<CreateAnnonceScreen> {
   }
 
   Future<void> _pickImage() async {
-    final completer = Completer<void>();
-    final input = html.FileUploadInputElement()
-      ..accept = 'image/*'
-      ..click();
-
-    input.onChange.listen((event) async {
-      final file = input.files?.first;
-      if (file == null) {
-        completer.complete();
-        return;
+    setState(() => _pickingImage = true);
+    try {
+      final result = await ImagePickerService.pickImage();
+      if (result != null) {
+        setState(() => _imageBase64 = result);
       }
-      setState(() => _pickingImage = true);
-      final reader = html.FileReader();
-      reader.readAsDataUrl(file);
-      reader.onLoad.listen((_) {
-        setState(() {
-          _imageBase64 = reader.result as String;
-          _pickingImage = false;
-        });
-        completer.complete();
-      });
-      reader.onError.listen((_) {
-        setState(() => _pickingImage = false);
-        completer.complete();
-      });
-    });
-
-    // Si l'utilisateur ferme sans choisir
-    html.window.addEventListener('focus', (_) {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (!completer.isCompleted) completer.complete();
-      });
-    }, true);
-
-    await completer.future;
+    } finally {
+      setState(() => _pickingImage = false);
+    }
   }
 
   Future<void> _submit() async {

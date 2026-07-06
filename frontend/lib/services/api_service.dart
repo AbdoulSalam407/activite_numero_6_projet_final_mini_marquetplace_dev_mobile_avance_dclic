@@ -22,29 +22,27 @@ class ApiService {
   ///
   /// Pour configurer une IP personnalisée, éditez: lib/config/api_config.dart
   static String get baseUrl {
-    // Si une IP personnalisée est définie, l'utiliser
+    // URL de production Render en priorité
+    if (ApiConfig.productionUrl != null) {
+      return ApiConfig.productionUrl!;
+    }
     if (ApiConfig.customIpAddress != null) {
       return ApiConfig.customBaseUrl;
     }
-
     if (kIsWeb) {
-      // Web: Chrome, Firefox, Edge, etc.
       return 'http://localhost:3001';
     } else if (Platform.isAndroid) {
-      // Android Emulator utilise 10.0.2.2 pour accéder à localhost du host
-      return 'http://10.0.2.2:3001';
+      return 'http://10.0.2.2:3001'; // émulateur uniquement
     } else if (Platform.isIOS) {
-      // iOS Simulator peut utiliser localhost
       return 'http://localhost:3001';
     }
-    // Par défaut
     return 'http://localhost:3001';
   }
 
   static Future<dynamic> get(String endpoint) async {
     final res = await http
         .get(Uri.parse('$baseUrl$endpoint'))
-        .timeout(const Duration(seconds: 10));
+        .timeout(const Duration(seconds: 60));
     return _handle(res);
   }
 
@@ -56,7 +54,7 @@ class ApiService {
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode(body),
         )
-        .timeout(const Duration(seconds: 10));
+        .timeout(const Duration(seconds: 60));
     return _handle(res);
   }
 
@@ -67,7 +65,7 @@ class ApiService {
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode(body),
         )
-        .timeout(const Duration(seconds: 10));
+        .timeout(const Duration(seconds: 60));
     return _handle(res);
   }
 
@@ -79,14 +77,14 @@ class ApiService {
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode(body),
         )
-        .timeout(const Duration(seconds: 10));
+        .timeout(const Duration(seconds: 60));
     return _handle(res);
   }
 
   static Future<void> delete(String endpoint) async {
     final res = await http
         .delete(Uri.parse('$baseUrl$endpoint'))
-        .timeout(const Duration(seconds: 10));
+        .timeout(const Duration(seconds: 60));
     _handle(res);
   }
 
